@@ -5,12 +5,22 @@
 
 package SparkCustomerApi;
 
+import static spark.Spark.before;
 import static spark.Spark.get;
 
+import com.elias.spark.customer.api.CustomerController;
+import com.elias.spark.customer.repository.CustomerRepository;
+import com.elias.spark.shared.Filters;
+
 public class App {
-	public static class HelloWorld {
-		public static void main(String[] args) {
-			get("/hello", (req, res) -> "Hello World");
-		}
+	public static CustomerRepository customerRepository;
+
+	public static void main(String[] args) {
+
+		customerRepository = new CustomerRepository();
+
+		before("*", Filters.addTrailingSlashes);
+
+		get(CustomerController.PATH, CustomerController.getAll);
 	}
 }
