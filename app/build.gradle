@@ -21,7 +21,7 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.3'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
 	// https://mvnrepository.com/artifact/org.jdbi/jdbi
-	implementation group: 'org.jdbi', name: 'jdbi', version: '2.78'
+	implementation group: 'org.jdbi', name: 'jdbi3-core', version: '3.10.0'
 	
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
 	implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.30.Final'
@@ -33,6 +33,9 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.+'
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.1'
+    // https://mvnrepository.com/artifact/com.google.inject/guice
+	implementation group: 'com.google.inject', name: 'guice', version: '5.0.1'
+    
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.0-jre'
@@ -40,7 +43,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'SparkCustomerApi.App'
+    mainClass = 'com.elias.spark.App'
 }
 
 flyway {

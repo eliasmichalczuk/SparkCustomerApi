@@ -1,27 +1,24 @@
 package com.elias.spark.customer.repository;
 
-import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
-import com.elias.spark.customer.Book;
-import com.google.common.collect.ImmutableList;
+import org.jdbi.v3.core.Jdbi;
 
+import com.elias.spark.customer.domain.Customer;
+import com.google.inject.Singleton;
+
+@Singleton
 public class CustomerRepository {
 
-	private final List<Book> books = ImmutableList.of(new Book("Moby Dick", "Herman Melville", "9789583001215"),
-	                                                  new Book("A Christmas Carol",
-	                                                           "Charles Dickens",
-	                                                           "9780141324524"));
-
-	public Iterable<Book> getAllBooks() {
-		return books;
-	}
-
-	public Book getBookByIsbn(String isbn) {
-		return books.stream().filter(b -> b.getIsbn().equals(isbn)).findFirst().orElse(null);
-	}
-
-	public Book getRandomBook() {
-		return books.get(new Random().nextInt(books.size()));
+	public Customer save(Customer customer) {
+		Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:5432/sparkCustomerDb", "dev", "dev");
+		jdbi.useHandle(handle -> handle.createUpdate("INSERT INTO customer(id, uuid, name) VALUES (?, ?, ?)")
+		                               .bind(0, customer.getId())
+		                               .bind(1, UUID.randomUUID())
+		                               .bind(2, customer.getName())
+		                               .execute());
+		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
+		                                                  .bind(0, customer.getId())
+		                                                  .mapToBean(Customer.class));
 	}
 }
