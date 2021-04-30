@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+
+  sparkCustomerDb: {}
+
+services:
+
+  sparkCustomerDb:
+    image: mysql/mysql-server:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: dev
+      MYSQL_ROOT_HOST: "0.0.0.0"
+      MYSQL_DATABASE: sparkCustomerDb
+    ports:
+      - 5432:5432
+    volumes:
+      - sparkCustomerDb:/var/lib/mysql
+    networks:
+      - mysql-compose-network
+
+  adminer:
+    image: adminer
+    ports:
+      - 8888:8080
+    networks:
+      - mysql-compose-network
+
+networks: 
+  mysql-compose-network:
+    driver: bridge
+

@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id "org.flywaydb.flyway" version "7.8.2"
 }
 
 repositories {
@@ -19,6 +20,16 @@ repositories {
 dependencies {
     implementation 'com.sparkjava:spark-core:2.3'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+	// https://mvnrepository.com/artifact/org.jdbi/jdbi
+	implementation group: 'org.jdbi', name: 'jdbi', version: '2.78'
+	
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+	implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.30.Final'
+	
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.24'
+	
+	
     testImplementation group: 'junit', name: 'junit', version: '4.+'
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.1'
@@ -31,3 +42,11 @@ application {
     // Define the main class for the application.
     mainClass = 'SparkCustomerApi.App'
 }
+
+flyway {
+    url = 'jdbc:mysql://localhost:5432/sparkCustomerDb'
+    user = 'dev'
+    password = 'dev'
+    schemas = ['default']
+}
+
