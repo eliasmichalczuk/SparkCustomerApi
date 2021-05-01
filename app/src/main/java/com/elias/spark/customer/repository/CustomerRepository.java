@@ -21,21 +21,21 @@ public class CustomerRepository {
 	}
 
 	public Customer save(Customer customer) {
-		jdbi.useHandle(handle -> handle.createUpdate("INSERT INTO customer(id, uuid, name) VALUES (?, ?, ?)")
-		                               .bind(0, customer.getId())
-		                               .bind(1, UUID.randomUUID().toString())
-		                               .bind(2, customer.getName())
-		                               .execute());
+		var id = jdbi.withHandle(handle -> handle.createUpdate("INSERT INTO customer(uuid, name) VALUES (?, ?)")
+		                                         .bind(0, UUID.randomUUID().toString())
+		                                         .bind(1, customer.getName())
+		                                         .executeAndReturnGeneratedKeys("id")
+		                                         .mapTo(Long.class)
+		                                         .one());
 		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
-		                                                  .bind(0, customer.getId())
+		                                                  .bind(0, id)
 		                                                  .mapTo(Customer.class)
 		                                                  .one());
-//		                                                  .mapToBean(Customer.class));
 	}
 
-	public Customer findById() {
+	public Customer findById(Long id) {
 		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
-		                                                  .bind(0, 1)
+		                                                  .bind(0, id)
 		                                                  .mapTo(Customer.class)
 		                                                  .one());
 	}

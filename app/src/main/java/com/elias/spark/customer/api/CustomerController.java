@@ -6,7 +6,6 @@ import static spark.Spark.post;
 import java.io.IOException;
 
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
-import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -33,7 +32,7 @@ public class CustomerController {
 
 	public void start() {
 		get(PATH, this::getAll);
-		get(PATH + "/1", this::findById);
+		get(PATH + ":id", this::findById);
 		post(PATH, this::save);
 	}
 
@@ -41,16 +40,18 @@ public class CustomerController {
 		return null;
 	};
 
-	public Customer save(Request request, Response response) {
+	public String save(Request request, Response response)
+	        throws JsonGenerationException, JsonMappingException, IOException {
 		String name = request.queryParams("name");
 		var cmd = new CreateCustomerCmd().setName(name);
 
-		return customerRepository.save(cmd.toCustomer());
+		var customer = customerRepository.save(cmd.toCustomer());
+		return objectMapper.writeValueAsString(customer);
 	};
 
 	public String findById(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
-		var customer = customerRepository.findById();
+		var customer = customerRepository.findById(Long.parseLong(request.params("id")));
 		return objectMapper.writeValueAsString(customer);
 	};
 }
