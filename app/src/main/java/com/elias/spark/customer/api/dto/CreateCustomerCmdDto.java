@@ -3,7 +3,7 @@ package com.elias.spark.customer.api.dto;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.elias.spark.customer.domain.Customer;
+import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.domain.Gender;
 
 public class CreateCustomerCmdDto {
@@ -14,8 +14,8 @@ public class CreateCustomerCmdDto {
 	private String cpf;
 	private Gender gender;
 
-	public Customer toCustomer() {
-		return new Customer(1l, UUID.randomUUID(), name, birthDate, cpf, gender, email);
+	public CreateCustomerCmd toCmd() {
+		return new CreateCustomerCmd(UUID.randomUUID(), name, birthDate, cpf, gender, email);
 	}
 
 	public String getName() {

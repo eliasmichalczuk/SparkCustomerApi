@@ -3,6 +3,7 @@ package com.elias.spark.customer.domain;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.elias.spark.customer.domain.exception.CustomerMaxAgeExceededException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 
@@ -26,6 +27,18 @@ public class Customer {
 		this.cpf = cpf;
 		this.gender = gender;
 		this.email = email;
+
+		verifyAge();
+	}
+
+	private void verifyAge() {
+		if (ageIsOverAHundredYearsOld()) {
+			throw new CustomerMaxAgeExceededException();
+		}
+	}
+
+	private boolean ageIsOverAHundredYearsOld() {
+		return (LocalDate.now().getYear() - birthDate.getYear()) > 100;
 	}
 
 	public Long getId() {

@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.io.IOException;
 
 import com.elias.spark.customer.api.dto.CreateCustomerCmdDto;
+import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,13 +23,15 @@ public class CustomerController {
 
 	public static String PATH = "/customers";
 	private final ObjectMapper objectMapper = new ObjectMapper();
-	private CustomerRepository customerRepository;
+	private final CustomerRepository customerRepository;
+	private final CustomerApplicationService customerApplicationService;
 
 	@Inject
-	public CustomerController(CustomerRepository customerRepository) {
+	public CustomerController(CustomerRepository customerRepository,
+	                          CustomerApplicationService customerApplicationService) {
 		super();
 		this.customerRepository = customerRepository;
-//		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.customerApplicationService = customerApplicationService;
 		objectMapper.findAndRegisterModules();
 	}
 
@@ -45,14 +48,25 @@ public class CustomerController {
 	public String findById(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
 		var customer = customerRepository.findById(Long.parseLong(request.params("id")));
-		return objectMapper.writeValueAsString(customer);
+		if (customer.isPresent()) {
+			response.status(200);
+			return objectMapper.writeValueAsString(customer);
+		}
+		response.status(404);
+		return "Customer not found.";
 	};
 
 	public String save(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
 		var dto = objectMapper.readValue(request.body(), CreateCustomerCmdDto.class);
 
-		var customer = customerRepository.save(dto.toCustomer());
-		return objectMapper.writeValueAsString(customer);
+		try {
+			var customer = customerApplicationService.save(dto.toCmd());
+			response.status(201);
+			return objectMapper.writeValueAsString(customer);
+		} catch (RuntimeException e) {
+			response.status(400);
+			return e.getMessage();
+		}
 	};
 }

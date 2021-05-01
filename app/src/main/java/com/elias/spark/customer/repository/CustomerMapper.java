@@ -12,8 +12,6 @@ import com.elias.spark.customer.domain.Gender;
 class CustomerMapper implements RowMapper<Customer> {
 	@Override
 	public Customer mapRow(ResultSet rs) throws SQLException {
-//		final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
-//		var birthDate = LocalDate.parse(rs.getDate("birthDate"));
 		return new Customer(rs.getLong("id"),
 		                    UUID.fromString(rs.getString("uuid")),
 		                    rs.getString("name"),

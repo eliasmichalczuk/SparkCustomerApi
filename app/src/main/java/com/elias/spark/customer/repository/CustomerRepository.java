@@ -1,5 +1,6 @@
 package com.elias.spark.customer.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.jdbi.v3.core.Jdbi;
@@ -37,10 +38,17 @@ public class CustomerRepository {
 		                                                  .one());
 	}
 
-	public Customer findById(Long id) {
-		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
-		                                                  .bind(0, id)
-		                                                  .mapTo(Customer.class)
-		                                                  .one());
+	public Optional<Customer> findById(Long id) {
+		return (Optional<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
+		                                                            .bind(0, id)
+		                                                            .mapTo(Customer.class)
+		                                                            .findOne());
+	}
+
+	public Optional<Customer> findByCpf(String cpf) {
+		return (Optional<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where cpf = ?")
+		                                                            .bind(0, cpf)
+		                                                            .mapTo(Customer.class)
+		                                                            .findOne());
 	}
 }
