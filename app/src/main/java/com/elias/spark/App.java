@@ -5,38 +5,22 @@
 
 package com.elias.spark;
 
-import static spark.Spark.before;
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import org.flywaydb.core.Flyway;
 
-import com.elias.spark.GuiceModule.DatabaseModule;
-import com.elias.spark.customer.api.CustomerController;
-import com.elias.spark.shared.Filters;
+import com.elias.spark.Modules.DatabaseModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class App {
-//
-//	private CustomerController customerController;
-//
-//	@Inject
-//	public App(CustomerController customerController) {
-//		this.customerController = customerController;
-//	}
 
 	public static void main(String[] args) {
 
-		before("*", Filters.addTrailingSlashes);
-
 		Injector injector = configure();
-		Flyway flyway = injector.getInstance(Flyway.class);
+		var flyway = injector.getInstance(Flyway.class);
+		var restServer = injector.getInstance(RestServer.class);
 
 		flyway.migrate();
-
-		get(CustomerController.PATH, CustomerController.getAll);
-		post(CustomerController.PATH, CustomerController.save);
+		restServer.start();
 	}
 
 	private static Injector configure() {

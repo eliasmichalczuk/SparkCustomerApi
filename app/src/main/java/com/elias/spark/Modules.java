@@ -3,32 +3,24 @@ package com.elias.spark;
 import org.flywaydb.core.Flyway;
 import org.jdbi.v3.core.Jdbi;
 
-import com.elias.spark.customer.repository.CustomerRepository;
-import com.elias.spark.shared.db.DbConnection;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-public final class GuiceModule {
+public final class Modules {
 
-//	@Override
-//	protected void configure() {
-//		bind(App.class).in(Singleton.class);
+//	static class CustomerModule extends AbstractModule {
+//		@Provides
+//		@Singleton
+//		private ObjectMapper provideObjectMapper() {
+//			return new ObjectMapper();
+//		}
+//
+//		@Provides
+//		private CustomerRepository provideCustomerRepository() {
+//			return new CustomerRepository();
+//		}
 //	}
-
-	static class CustomerModule extends AbstractModule {
-		@Provides
-		@Singleton
-		private ObjectMapper provideObjectMapper() {
-			return new ObjectMapper();
-		}
-
-		@Provides
-		private CustomerRepository provideCustomerRepository() {
-			return new CustomerRepository();
-		}
-	}
 
 	static class DatabaseModule extends AbstractModule {
 		@Override
@@ -38,7 +30,8 @@ public final class GuiceModule {
 		@Singleton
 		@Provides
 		static Jdbi provideDataSource() {
-			return DbConnection.get();
+			Jdbi jdbi = Jdbi.create("jdbc:mysql://127.0.0.1:3306/sparkcustomerdb", "root", "root");
+			return jdbi;
 		}
 
 		@Singleton
@@ -50,10 +43,6 @@ public final class GuiceModule {
 			                   .load();
 			return flyway;
 		}
-	}
 
-//	@Provides
-//	private CustomerController provideCustomerController() {
-//		return new CustomerController();
-//	}
+	}
 }

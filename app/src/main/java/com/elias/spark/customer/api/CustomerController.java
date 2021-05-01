@@ -1,34 +1,56 @@
 package com.elias.spark.customer.api;
 
+import static spark.Spark.get;
+import static spark.Spark.post;
+
+import java.io.IOException;
+
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
+import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.repository.CustomerRepository;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+@Singleton
 public class CustomerController {
 
 	public static String PATH = "/customer/";
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
+	private CustomerRepository customerRepository;
 
 	@Inject
-	private static CustomerRepository customerRepository;
+	public CustomerController(CustomerRepository customerRepository) {
+		super();
+		this.customerRepository = customerRepository;
+	}
 
-	public static Route getAll = (Request request, Response response) -> {
+	public void start() {
+		get(PATH, this::getAll);
+		get(PATH + "/1", this::findById);
+		post(PATH, this::save);
+	}
 
-//		return objectMapper.writeValueAsString(App.customerRepository.getAllBooks());
+	public Route getAll(Request request, Response response) {
 		return null;
 	};
 
-	public static Route save = (Request request, Response response) -> {
-//		Customer customer = objectMapper.reader(Customer.class).readValue(request.bodyAsBytes());
-//		return objectMapper.writeValueAsString(App.customerRepository.getAllBooks());
+	public Customer save(Request request, Response response) {
 		String name = request.queryParams("name");
 		var cmd = new CreateCustomerCmd().setName(name);
 
 		return customerRepository.save(cmd.toCustomer());
+	};
+
+	public String findById(Request request, Response response)
+	        throws JsonGenerationException, JsonMappingException, IOException {
+		var customer = customerRepository.findById();
+		return objectMapper.writeValueAsString(customer);
 	};
 }

@@ -2,9 +2,15 @@ package com.elias.spark.customer.domain;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 public class Customer {
 
 	private Long id;
+
+	@JsonSerialize(using = UUIDSerializer.class)
+	@JsonDeserialize(using = UUIDDeserializer.class)
 	private UUID uuid;
 	private String name;
 
