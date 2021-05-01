@@ -1,24 +1,31 @@
 package com.elias.spark.customer.domain;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 
 public class Customer {
 
 	private Long id;
-
-	@JsonSerialize(using = UUIDSerializer.class)
-	@JsonDeserialize(using = UUIDDeserializer.class)
 	private UUID uuid;
 	private String name;
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	private LocalDate birthDate;
+	private String cpf;
+	private Gender gender;
+	private String email;
 
-	public Customer(Long id, UUID uuid, String name) {
+	public Customer(Long id, UUID uuid, String name, LocalDate birthDate, String cpf, Gender gender, String email) {
 		super();
 		this.id = id;
 		this.uuid = uuid;
 		this.name = name;
+		this.birthDate = birthDate;
+		this.cpf = cpf;
+		this.gender = gender;
+		this.email = email;
 	}
 
 	public Long getId() {
@@ -45,4 +52,35 @@ public class Customer {
 		this.name = name;
 	}
 
+	public LocalDate getBirthDate() {
+		return birthDate;
+	}
+
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }

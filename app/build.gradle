@@ -18,6 +18,9 @@ repositories {
 }
 
 dependencies {
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.3'
+
     implementation 'com.sparkjava:spark-core:2.3'
     
     implementation "org.flywaydb:flyway-core:7.8.2"
