@@ -7,17 +7,16 @@ volumes:
 services:
 
   sparkCustomerDb:
-    image: mysql/mysql-server:5.7
+    image: mysql:5.7
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: dev
       MYSQL_PASSWORD: dev
-      MYSQL_ROOT_HOST: "0.0.0.0"
-      MYSQL_DATABASE: sparkCustomerDb
+      MYSQL_DATABASE: sparkcustomerdb
     ports:
-      - 5432:5432
+      - "127.0.0.1:9999:5432"
     volumes:
       - sparkCustomerDb:/var/lib/mysql
     networks:

@@ -19,6 +19,9 @@ repositories {
 
 dependencies {
     implementation 'com.sparkjava:spark-core:2.3'
+    
+    implementation "org.flywaydb:flyway-core:7.8.2"
+    
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
 	// https://mvnrepository.com/artifact/org.jdbi/jdbi
 	implementation group: 'org.jdbi', name: 'jdbi3-core', version: '3.10.0'
@@ -50,6 +53,7 @@ flyway {
     url = 'jdbc:mysql://localhost:5432/sparkCustomerDb'
     user = 'dev'
     password = 'dev'
+    driver = 'com.mysql.jdbc.Driver'
     schemas = ['default']
 }
 

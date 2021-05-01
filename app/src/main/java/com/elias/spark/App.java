@@ -9,8 +9,13 @@ import static spark.Spark.before;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import org.flywaydb.core.Flyway;
+
+import com.elias.spark.GuiceModule.DatabaseModule;
 import com.elias.spark.customer.api.CustomerController;
 import com.elias.spark.shared.Filters;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class App {
 //
@@ -25,7 +30,16 @@ public class App {
 
 		before("*", Filters.addTrailingSlashes);
 
+		Injector injector = configure();
+		Flyway flyway = injector.getInstance(Flyway.class);
+
+		flyway.migrate();
+
 		get(CustomerController.PATH, CustomerController.getAll);
 		post(CustomerController.PATH, CustomerController.save);
+	}
+
+	private static Injector configure() {
+		return Guice.createInjector(new DatabaseModule());
 	}
 }

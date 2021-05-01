@@ -1,6 +1,6 @@
 package com.elias.spark.customer.api;
 
-import com.elias.spark.customer.domain.Customer;
+import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -24,10 +24,11 @@ public class CustomerController {
 	};
 
 	public static Route save = (Request request, Response response) -> {
-
+//		Customer customer = objectMapper.reader(Customer.class).readValue(request.bodyAsBytes());
 //		return objectMapper.writeValueAsString(App.customerRepository.getAllBooks());
 		String name = request.queryParams("name");
-		Customer customer = objectMapper.reader(Customer.class).readValue(request.bodyAsBytes());
-		return customerRepository.save(customer);
+		var cmd = new CreateCustomerCmd().setName(name);
+
+		return customerRepository.save(cmd.toCustomer());
 	};
 }
