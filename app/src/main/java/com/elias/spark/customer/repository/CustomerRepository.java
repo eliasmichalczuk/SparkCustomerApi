@@ -1,5 +1,6 @@
 package com.elias.spark.customer.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,5 +51,11 @@ public class CustomerRepository {
 		                                                            .bind(0, cpf)
 		                                                            .mapTo(Customer.class)
 		                                                            .findOne());
+	}
+
+	public List<Customer> findAll() {
+		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer ORDER BY name LIMIT 10")
+		                                                        .mapTo(Customer.class)
+		                                                        .list());
 	}
 }

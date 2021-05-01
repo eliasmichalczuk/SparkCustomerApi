@@ -1,14 +1,17 @@
 package com.elias.spark.customer.api;
 
+import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.elias.spark.customer.api.dto.CreateCustomerCmdDto;
 import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -16,7 +19,6 @@ import com.google.inject.Singleton;
 
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 @Singleton
 public class CustomerController {
@@ -41,8 +43,15 @@ public class CustomerController {
 		post(PATH, "application/json", this::save);
 	}
 
-	public Route getAll(Request request, Response response) {
-		return null;
+	public List<String> getAll(Request request, Response response) {
+		return customerRepository.findAll().stream().map(t -> {
+			try {
+				return objectMapper.writeValueAsString(t);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				return "";
+			}
+		}).collect(toList());
 	};
 
 	public String findById(Request request, Response response)
