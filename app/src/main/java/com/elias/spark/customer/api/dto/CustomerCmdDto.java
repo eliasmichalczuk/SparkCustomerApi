@@ -4,9 +4,10 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
+import com.elias.spark.customer.application.cmd.UpdateCustomerCmd;
 import com.elias.spark.customer.domain.Gender;
 
-public class CreateCustomerCmdDto {
+public class CustomerCmdDto {
 
 	private String name;
 	private String email;
@@ -14,8 +15,12 @@ public class CreateCustomerCmdDto {
 	private String cpf;
 	private Gender gender;
 
-	public CreateCustomerCmd toCmd() {
+	public CreateCustomerCmd toCreateCmd() {
 		return new CreateCustomerCmd(UUID.randomUUID(), name, birthDate, cpf, gender, email);
+	}
+
+	public UpdateCustomerCmd toUpdateCmd(Long id) {
+		return new UpdateCustomerCmd(id, UUID.randomUUID(), name, birthDate, cpf, gender, email);
 	}
 
 	public String getName() {

@@ -1,6 +1,8 @@
 package com.elias.spark.customer.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +41,20 @@ public class CustomerRepository {
 		                                                  .one());
 	}
 
+	public Customer update(Customer customer) {
+		jdbi.useHandle(handle -> handle.createUpdate("UPDATE customer SET name = :name, birthDate = :birthDate, email = :email, gender = :gender, cpf = :cpf")
+		                               .bind("name", customer.getName())
+		                               .bind("birthDate", customer.getBirthDate())
+		                               .bind("email", customer.getEmail())
+		                               .bind("gender", customer.getGender())
+		                               .bind("cpf", customer.getCpf())
+		                               .execute());
+		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
+		                                                  .bind(0, customer.getId())
+		                                                  .mapTo(Customer.class)
+		                                                  .one());
+	}
+
 	public Optional<Customer> findById(Long id) {
 		return (Optional<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
 		                                                            .bind(0, id)
@@ -53,8 +69,14 @@ public class CustomerRepository {
 		                                                            .findOne());
 	}
 
-	public List<Customer> findAll() {
-		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer ORDER BY name LIMIT 10")
+	public List<Customer> findAll(String name, String birthDate) {
+		Map<String, String> params = new HashMap<>();
+		params.put("name", name);
+		params.put("birthDate", birthDate);
+		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer"
+		        + " where 1=1 and (:name is not null and name = :name) "
+		        + " and (:birthDate is not null and birthDate = :birthDate) and 1=1 ")
+		                                                        .bindMap(params)
 		                                                        .mapTo(Customer.class)
 		                                                        .list());
 	}

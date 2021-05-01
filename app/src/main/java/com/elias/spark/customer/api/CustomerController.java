@@ -3,11 +3,12 @@ package com.elias.spark.customer.api;
 import static java.util.stream.Collectors.toList;
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.put;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.elias.spark.customer.api.dto.CreateCustomerCmdDto;
+import com.elias.spark.customer.api.dto.CustomerCmdDto;
 import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import javassist.NotFoundException;
 import spark.Request;
 import spark.Response;
 
@@ -41,10 +43,13 @@ public class CustomerController {
 		get(PATH, this::getAll);
 		get(PATH + "/:id", this::findById);
 		post(PATH, "application/json", this::save);
+		put(PATH + "/:id", "application/json", this::update);
 	}
 
 	public List<String> getAll(Request request, Response response) {
-		return customerRepository.findAll().stream().map(t -> {
+		var name = request.queryParams("name");
+		var birthDate = request.queryParams("birthDate");
+		return customerRepository.findAll(name, birthDate).stream().map(t -> {
 			try {
 				return objectMapper.writeValueAsString(t);
 			} catch (JsonProcessingException e) {
@@ -67,11 +72,25 @@ public class CustomerController {
 
 	public String save(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
-		var dto = objectMapper.readValue(request.body(), CreateCustomerCmdDto.class);
+		var dto = objectMapper.readValue(request.body(), CustomerCmdDto.class);
 
 		try {
-			var customer = customerApplicationService.save(dto.toCmd());
+			var customer = customerApplicationService.save(dto.toCreateCmd());
 			response.status(201);
+			return objectMapper.writeValueAsString(customer);
+		} catch (RuntimeException e) {
+			response.status(400);
+			return e.getMessage();
+		}
+	};
+
+	public String update(Request request, Response response)
+	        throws JsonGenerationException, JsonMappingException, IOException, NotFoundException {
+		var dto = objectMapper.readValue(request.body(), CustomerCmdDto.class);
+
+		try {
+			var customer = customerApplicationService.update(dto.toUpdateCmd(Long.valueOf(request.params("id"))));
+			response.status(200);
 			return objectMapper.writeValueAsString(customer);
 		} catch (RuntimeException e) {
 			response.status(400);

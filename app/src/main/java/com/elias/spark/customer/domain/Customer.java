@@ -31,6 +31,15 @@ public class Customer {
 		verifyAge();
 	}
 
+	public void update(String name, LocalDate birthDate, String cpf, Gender gender, String email) {
+		this.name = name;
+		this.birthDate = birthDate;
+		this.cpf = cpf;
+		this.gender = gender;
+		this.email = email;
+		verifyAge();
+	}
+
 	private void verifyAge() {
 		if (ageIsOverAHundredYearsOld()) {
 			throw new CustomerMaxAgeExceededException();
