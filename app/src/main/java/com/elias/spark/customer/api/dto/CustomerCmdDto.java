@@ -1,12 +1,13 @@
 package com.elias.spark.customer.api.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.application.cmd.UpdateCustomerCmd;
-import com.elias.spark.customer.domain.Address;
 import com.elias.spark.customer.domain.Gender;
 
 public class CustomerCmdDto {
@@ -16,14 +17,27 @@ public class CustomerCmdDto {
 	private LocalDate birthDate;
 	private String cpf;
 	private Gender gender;
-	private List<Address> addresses;
+	private List<AddressCmdDto> addresses;
 
 	public CreateCustomerCmd toCreateCmd() {
-		return new CreateCustomerCmd(UUID.randomUUID(), name, birthDate, cpf, gender, email, addresses);
+		return new CreateCustomerCmd(UUID.randomUUID(),
+		                             name,
+		                             birthDate,
+		                             cpf,
+		                             gender,
+		                             email,
+		                             addresses.stream().map(AddressCmdDto::toAddress).collect(toList()));
 	}
 
 	public UpdateCustomerCmd toUpdateCmd(Integer id) {
-		return new UpdateCustomerCmd(id, UUID.randomUUID(), name, birthDate, cpf, gender, email, addresses);
+		return new UpdateCustomerCmd(id,
+		                             UUID.randomUUID(),
+		                             name,
+		                             birthDate,
+		                             cpf,
+		                             gender,
+		                             email,
+		                             addresses.stream().map(AddressCmdDto::toAddress).collect(toList()));
 	}
 
 	public String getName() {
@@ -54,11 +68,11 @@ public class CustomerCmdDto {
 		return cpf;
 	}
 
-	public List<Address> getAddresses() {
+	public List<AddressCmdDto> getAddresses() {
 		return addresses;
 	}
 
-	public void setAddresses(List<Address> addresses) {
+	public void setAddresses(List<AddressCmdDto> addresses) {
 		this.addresses = addresses;
 	}
 

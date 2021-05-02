@@ -5,10 +5,12 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import org.flywaydb.core.internal.jdbc.RowMapper;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 
 import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.Gender;
 
+@RegisterBeanMapper(Customer.class)
 class CustomerMapper implements RowMapper<Customer> {
 	@Override
 	public Customer mapRow(ResultSet rs) throws SQLException {

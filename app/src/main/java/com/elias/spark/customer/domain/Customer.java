@@ -20,6 +20,10 @@ public class Customer {
 	private String email;
 	private List<Address> addresses;
 
+	public Customer() {
+		super();
+	}
+
 	public Customer(Integer id,
 	                UUID uuid,
 	                String name,
@@ -116,7 +120,7 @@ public class Customer {
 		this.email = email;
 	}
 
-	public void addAdress(Address address) {
+	public void addAddress(Address address) {
 		this.addresses.add(address);
 	}
 

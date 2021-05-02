@@ -1,6 +1,8 @@
-package com.elias.spark.customer.domain;
+package com.elias.spark.customer.api.dto;
 
-public class Address {
+import com.elias.spark.customer.domain.Address;
+
+public class AddressCmdDto {
 	private Integer id;
 	private String state;
 	private String city;
@@ -12,27 +14,8 @@ public class Address {
 	private Integer customerId;
 	private boolean main;
 
-	public Address(Integer id,
-	               String state,
-	               String city,
-	               String neighborhood,
-	               String zipCode,
-	               String street,
-	               String number,
-	               String additionalInformation,
-	               Integer customerId,
-	               boolean main) {
-		super();
-		this.id = id;
-		this.state = state;
-		this.city = city;
-		this.neighborhood = neighborhood;
-		this.zipCode = zipCode;
-		this.street = street;
-		this.number = number;
-		this.additionalInformation = additionalInformation;
-		this.customerId = customerId;
-		this.main = main;
+	public Address toAddress() {
+		return new Address(null, state, city, neighborhood, zipCode, street, number, additionalInformation, null, main);
 	}
 
 	public String getState() {
@@ -82,8 +65,6 @@ public class Address {
 	public boolean getMain() {
 		return main;
 	}
-
-	// Setter Methods
 
 	public void setState(String state) {
 		this.state = state;

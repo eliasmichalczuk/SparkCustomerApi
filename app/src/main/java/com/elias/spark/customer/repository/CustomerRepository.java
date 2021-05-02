@@ -1,19 +1,21 @@
 package com.elias.spark.customer.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.jdbi.v3.sqlobject.SqlObject;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import com.elias.spark.customer.domain.Address;
 import com.elias.spark.customer.domain.Customer;
+import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -27,6 +29,7 @@ public class CustomerRepository {
 		super();
 		this.jdbi = jdbi;
 		jdbi.registerRowMapper(Customer.class, (rs, ctx) -> new CustomerMapper().mapRow(rs));
+		jdbi.registerRowMapper(Address.class, (rs, ctx) -> new AddressMapper().mapRow(rs));
 	}
 
 	public Customer saveFullCustomer(Customer customer) {
@@ -70,15 +73,55 @@ public class CustomerRepository {
 		                                       .one());
 	}
 
+	public Customer findByIdManualJoin(Integer id) {
+		var customer = findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+		var addresses = findAllByCustomerId(id);
+		customer.setAddresses(addresses);
+		return customer;
+	}
+
+	public Optional<Customer> customerWithAddressesById(int id) {
+		return (Optional<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT c.id c_id, c.name c_name, c.uuid c_uuid, c.birthDate c_birthDate,"
+		        + " c.cpf c_cpf, c.gender c_gender, c.email c_email, addr.id addr_id" + " from customer c "
+		        + " LEFT JOIN address addr on c.id = addr.customerId where c.id = :id")
+		                                                            .bind("id", id)
+		                                                            .registerRowMapper(ConstructorMapper.factory(Customer.class,
+		                                                                                                         "c_"))
+		                                                            .registerRowMapper(ConstructorMapper.factory(Address.class,
+		                                                                                                         "addr_"))
+		                                                            .reduceRows(new LinkedHashMap<Integer, Customer>(),
+		                                                                        (map, rowView) -> {
+			                                                                        Customer customer = map.computeIfAbsent(rowView.getColumn("c_id",
+			                                                                                                                                  Integer.class),
+			                                                                                                                customerId -> rowView.getRow(Customer.class));
+
+			                                                                        if (rowView.getColumn("p_id",
+			                                                                                              Long.class) != null) {
+				                                                                        customer.addAddress(rowView.getRow(Address.class));
+			                                                                        }
+
+			                                                                        return map;
+		                                                                        })
+		                                                            .values()
+		                                                            .stream()
+		                                                            .findFirst());
+	}
+
 	public List<Address> insertAddress(List<Address> addresses) {
-		var ids = new ArrayList<Integer>();
-		addresses.forEach(adr -> ids.add(this.insertAddress(adr)));
-		return findAllById(ids);
+		addresses.forEach(adr -> this.insertAddress(adr));
+		return findAllByCustomerId(addresses.iterator().next().getCustomerId());
 	}
 
 	public List<Address> findAllById(List<Integer> ids) {
-		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from addres where id IN (?)")
-		                                                       .bind(0, ids)
+		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where id IN (:ids)")
+		                                                       .bind("ids", ids.toArray())
+		                                                       .mapTo(Address.class)
+		                                                       .list());
+	}
+
+	public List<Address> findAllByCustomerId(Integer id) {
+		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where customerId = :id")
+		                                                       .bind("id", id)
 		                                                       .mapTo(Address.class)
 		                                                       .list());
 	}

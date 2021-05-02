@@ -12,7 +12,6 @@ import java.util.List;
 import com.elias.spark.customer.api.dto.CustomerCmdDto;
 import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.domain.Customer;
-import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.elias.spark.shared.exception.NotFoundException;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -57,13 +56,9 @@ public class CustomerController {
 
 	public Object findById(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
-		var customer = customerRepository.findById(Integer.parseInt(request.params("id")));
-		if (customer.isPresent()) {
-			response.status(200);
-			return customer.get();
-		}
-		response.status(404);
-		throw new CustomerNotFoundException(Integer.parseInt(request.params("id")));
+		var customer = customerRepository.findByIdManualJoin(Integer.parseInt(request.params("id")));
+		response.status(200);
+		return customer;
 	};
 
 	public Customer save(Request request, Response response)
