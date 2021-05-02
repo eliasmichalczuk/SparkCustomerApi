@@ -9,9 +9,6 @@ import java.util.UUID;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
-import org.jdbi.v3.sqlobject.SqlObject;
-import org.jdbi.v3.sqlobject.customizer.BindBean;
-import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import com.elias.spark.customer.domain.exception.AddressNotFoundException;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
@@ -21,14 +18,15 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class CustomerRepository {
+public class CustomerRepository implements IAddressRepository {
 
 	private final Jdbi jdbi;
+	private final IAddressRepository addressRepository;
 
 	@Inject
 	public CustomerRepository(Jdbi jdbi) {
-		super();
 		this.jdbi = jdbi;
+		this.addressRepository = jdbi.onDemand(IAddressRepository.class);
 		jdbi.registerRowMapper(Customer.class, (rs, ctx) -> new CustomerMapper().mapRow(rs));
 		jdbi.registerRowMapper(Address.class, (rs, ctx) -> new AddressMapper().mapRow(rs));
 	}
@@ -55,23 +53,6 @@ public class CustomerRepository {
 		                                                  .bind(0, id)
 		                                                  .mapTo(Customer.class)
 		                                                  .one());
-	}
-
-	public Integer insertAddress(Address address) {
-		return jdbi.withHandle(handle -> handle.createUpdate("insert into address (state, city, neighborhood, zipCode, street, number, additionalInformation, customerId, main)"
-		        + " values (:state, :city, :neighborhood, :zipCode, :street, :number, :additionalInformation, :customerId, :main)")
-		                                       .bind("state", address.getState())
-		                                       .bind("city", address.getCity())
-		                                       .bind("neighborhood", address.getNeighborhood())
-		                                       .bind("zipCode", address.getZipCode())
-		                                       .bind("street", address.getStreet())
-		                                       .bind("number", address.getNumber())
-		                                       .bind("additionalInformation", address.getAdditionalInformation())
-		                                       .bind("customerId", address.getCustomerId())
-		                                       .bind("main", address.getMain())
-		                                       .executeAndReturnGeneratedKeys("id")
-		                                       .mapTo(Integer.class)
-		                                       .one());
 	}
 
 	public void updateAddress(Address address) {
@@ -152,6 +133,27 @@ public class CustomerRepository {
 		                                       .orElseThrow(() -> new AddressNotFoundException(id)));
 	}
 
+	public Integer insertAddress(Address a) {
+		return addressRepository.insertAddress(a);
+	}
+
+	public Integer insertAddress1(Address address) {
+		return jdbi.withHandle(handle -> handle.createUpdate("insert into address (state, city, neighborhood, zipCode, street, number, additionalInformation, customerId, main)"
+		        + " values (:state, :city, :neighborhood, :zipCode, :street, :number, :additionalInformation, :customerId, :main)")
+		                                       .bind("state", address.getState())
+		                                       .bind("city", address.getCity())
+		                                       .bind("neighborhood", address.getNeighborhood())
+		                                       .bind("zipCode", address.getZipCode())
+		                                       .bind("street", address.getStreet())
+		                                       .bind("number", address.getNumber())
+		                                       .bind("additionalInformation", address.getAdditionalInformation())
+		                                       .bind("customerId", address.getCustomerId())
+		                                       .bind("main", address.getMain())
+		                                       .executeAndReturnGeneratedKeys("id")
+		                                       .mapTo(Integer.class)
+		                                       .one());
+	}
+
 	public Customer update(Customer customer) {
 		jdbi.useHandle(handle -> handle.createUpdate("UPDATE customer SET name = :name, birthDate = :birthDate, email = :email, gender = :gender, cpf = :cpf"
 		        + " where id = :id")
@@ -208,12 +210,5 @@ public class CustomerRepository {
 
 	public void deleteAddress(Integer id) {
 		jdbi.withHandle(handle -> handle.execute("DELETE from address where id = ?", id));
-	}
-
-	@Singleton
-	public interface IAddressRepository extends SqlObject {
-		@SqlUpdate("insert into address (state, city, neighborhood, zipCode, street, number, additionalInformation, customerId, main)"
-		        + " values (:state, :city, :neighborhood, :zipCode, :street, :number, :additionalInformation, :customerId, :main)")
-		void insert(@BindBean Address contact);
 	}
 }
