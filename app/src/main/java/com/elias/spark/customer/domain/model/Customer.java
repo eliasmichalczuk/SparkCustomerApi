@@ -1,9 +1,10 @@
-package com.elias.spark.customer.domain;
+package com.elias.spark.customer.domain.model;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.elias.spark.customer.domain.enums.Gender;
 import com.elias.spark.customer.domain.exception.CustomerMaxAgeExceededException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;

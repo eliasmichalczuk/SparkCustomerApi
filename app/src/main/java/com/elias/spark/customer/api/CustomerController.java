@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.elias.spark.customer.api.dto.CustomerCmdDto;
 import com.elias.spark.customer.application.CustomerApplicationService;
-import com.elias.spark.customer.domain.Customer;
+import com.elias.spark.customer.domain.model.Customer;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.elias.spark.shared.exception.NotFoundException;
 import com.fasterxml.jackson.core.JsonGenerationException;

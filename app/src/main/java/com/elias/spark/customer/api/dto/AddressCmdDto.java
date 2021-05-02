@@ -1,6 +1,6 @@
 package com.elias.spark.customer.api.dto;
 
-import com.elias.spark.customer.domain.Address;
+import com.elias.spark.customer.domain.model.Address;
 
 public class AddressCmdDto {
 	private Integer id;

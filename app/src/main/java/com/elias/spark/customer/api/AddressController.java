@@ -6,7 +6,7 @@ import static spark.Spark.get;
 import java.util.List;
 
 import com.elias.spark.customer.application.CustomerApplicationService;
-import com.elias.spark.customer.domain.Address;
+import com.elias.spark.customer.domain.model.Address;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;

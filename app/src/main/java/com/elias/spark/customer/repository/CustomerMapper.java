@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.flywaydb.core.internal.jdbc.RowMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 
-import com.elias.spark.customer.domain.Customer;
-import com.elias.spark.customer.domain.Gender;
+import com.elias.spark.customer.domain.enums.Gender;
+import com.elias.spark.customer.domain.model.Customer;
 
 @RegisterBeanMapper(Customer.class)
 class CustomerMapper implements RowMapper<Customer> {

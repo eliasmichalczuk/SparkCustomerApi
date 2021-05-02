@@ -13,9 +13,9 @@ import org.jdbi.v3.sqlobject.SqlObject;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import com.elias.spark.customer.domain.Address;
-import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
+import com.elias.spark.customer.domain.model.Address;
+import com.elias.spark.customer.domain.model.Customer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 

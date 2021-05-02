@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import com.elias.spark.customer.domain.Address;
-import com.elias.spark.customer.domain.Customer;
-import com.elias.spark.customer.domain.Gender;
+import com.elias.spark.customer.domain.enums.Gender;
+import com.elias.spark.customer.domain.model.Address;
+import com.elias.spark.customer.domain.model.Customer;
 
 public class CreateCustomerCmd {
 	private final String name;
@@ -54,6 +54,10 @@ public class CreateCustomerCmd {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
 	}
 
 }

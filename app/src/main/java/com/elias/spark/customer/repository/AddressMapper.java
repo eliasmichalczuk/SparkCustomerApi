@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.flywaydb.core.internal.jdbc.RowMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 
-import com.elias.spark.customer.domain.Address;
+import com.elias.spark.customer.domain.model.Address;
 
 @RegisterBeanMapper(Address.class)
 class AddressMapper implements RowMapper<Address> {

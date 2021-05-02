@@ -1,4 +1,4 @@
-package com.elias.spark.customer.domain;
+package com.elias.spark.customer.domain.model;
 
 public class Address {
 	private Integer id;
@@ -115,5 +115,9 @@ public class Address {
 
 	public void setMain(boolean main) {
 		this.main = main;
+	}
+
+	public boolean isMain() {
+		return main;
 	}
 }

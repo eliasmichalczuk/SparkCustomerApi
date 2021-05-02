@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.application.cmd.UpdateCustomerCmd;
-import com.elias.spark.customer.domain.Gender;
+import com.elias.spark.customer.domain.enums.Gender;
 
 public class CustomerCmdDto {
 
