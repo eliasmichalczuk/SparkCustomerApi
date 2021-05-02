@@ -30,7 +30,6 @@ public class ExceptionHandler implements Route {
 			if (res.raw().getStatus() / 100 == 2) {
 				res.status(400);
 			}
-			res.raw().getStatus();
 			return objectMapper.writeValueAsString(new ExceptionResponse(e.getMessage(), e.getClass().getSimpleName()));
 		}
 	}
