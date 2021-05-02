@@ -17,6 +17,7 @@ public class Customer {
 	private String cpf;
 	private Gender gender;
 	private String email;
+//	private List<Address> addresses;
 
 	public Customer(Long id, UUID uuid, String name, LocalDate birthDate, String cpf, Gender gender, String email) {
 		super();
