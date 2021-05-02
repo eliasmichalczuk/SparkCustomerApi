@@ -13,6 +13,7 @@ import org.jdbi.v3.sqlobject.SqlObject;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import com.elias.spark.customer.domain.exception.AddressNotFoundException;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
 import com.elias.spark.customer.domain.model.Address;
 import com.elias.spark.customer.domain.model.Customer;
@@ -32,7 +33,7 @@ public class CustomerRepository {
 		jdbi.registerRowMapper(Address.class, (rs, ctx) -> new AddressMapper().mapRow(rs));
 	}
 
-	public Customer saveFullCustomer(Customer customer) {
+	public Customer saveCustomerWithAddresses(Customer customer) {
 		var saved = this.save(customer);
 		customer.getAddresses().forEach(a -> a.setCustomerId(saved.getId()));
 		customer.setAddresses(this.insertAddress(customer.getAddresses()));
@@ -73,6 +74,22 @@ public class CustomerRepository {
 		                                       .one());
 	}
 
+	public void updateAddress(Address address) {
+		jdbi.withHandle(handle -> handle.createUpdate("UPDATE address SET"
+		        + " state = :state, city = :city, neighborhood = :neighborhood, zipCode = :zipCode, street = :street, "
+		        + "number = :number, additionalInformation = :additionalInformation, main = :main " + " where id = :id")
+		                                .bind("state", address.getState())
+		                                .bind("city", address.getCity())
+		                                .bind("neighborhood", address.getNeighborhood())
+		                                .bind("zipCode", address.getZipCode())
+		                                .bind("street", address.getStreet())
+		                                .bind("number", address.getNumber())
+		                                .bind("additionalInformation", address.getAdditionalInformation())
+		                                .bind("main", address.getMain())
+		                                .bind("id", address.getId())
+		                                .execute());
+	}
+
 	public Customer findByIdManualJoin(Integer id) {
 		var customer = findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
 		var addresses = findAllByCustomerId(id);
@@ -80,6 +97,7 @@ public class CustomerRepository {
 		return customer;
 	}
 
+	// not working
 	public Optional<Customer> customerWithAddressesById(int id) {
 		return (Optional<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT c.id c_id, c.name c_name, c.uuid c_uuid, c.birthDate c_birthDate,"
 		        + " c.cpf c_cpf, c.gender c_gender, c.email c_email, addr.id addr_id" + " from customer c "
@@ -126,13 +144,23 @@ public class CustomerRepository {
 		                                                       .list());
 	}
 
+	public Address getAddressById(Integer id) {
+		return jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where id = :id")
+		                                       .bind("id", id)
+		                                       .mapTo(Address.class)
+		                                       .findOne()
+		                                       .orElseThrow(() -> new AddressNotFoundException(id)));
+	}
+
 	public Customer update(Customer customer) {
-		jdbi.useHandle(handle -> handle.createUpdate("UPDATE customer SET name = :name, birthDate = :birthDate, email = :email, gender = :gender, cpf = :cpf")
+		jdbi.useHandle(handle -> handle.createUpdate("UPDATE customer SET name = :name, birthDate = :birthDate, email = :email, gender = :gender, cpf = :cpf"
+		        + " where id = :id")
 		                               .bind("name", customer.getName())
 		                               .bind("birthDate", customer.getBirthDate())
 		                               .bind("email", customer.getEmail())
 		                               .bind("gender", customer.getGender())
 		                               .bind("cpf", customer.getCpf())
+		                               .bind("id", customer.getId())
 		                               .execute());
 		return (Customer) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
 		                                                  .bind(0, customer.getId())
@@ -145,6 +173,14 @@ public class CustomerRepository {
 		                                                            .bind(0, id)
 		                                                            .mapTo(Customer.class)
 		                                                            .findOne());
+	}
+
+	public Customer getById(Integer id) {
+		return jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer where id = ?")
+		                                       .bind(0, id)
+		                                       .mapTo(Customer.class)
+		                                       .findOne())
+		           .orElseThrow(() -> new CustomerNotFoundException(id));
 	}
 
 	public Optional<Customer> findByCpf(String cpf) {
@@ -166,8 +202,12 @@ public class CustomerRepository {
 		                                                        .list());
 	}
 
-	public void delete(Long id) {
+	public void delete(Integer id) {
 		jdbi.withHandle(handle -> handle.execute("DELETE from customer where id = ?", id));
+	}
+
+	public void deleteAddress(Integer id) {
+		jdbi.withHandle(handle -> handle.execute("DELETE from address where id = ?", id));
 	}
 
 	@Singleton

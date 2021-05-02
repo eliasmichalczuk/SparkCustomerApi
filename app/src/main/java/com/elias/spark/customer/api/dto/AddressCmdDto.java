@@ -18,6 +18,10 @@ public class AddressCmdDto {
 		return new Address(null, state, city, neighborhood, zipCode, street, number, additionalInformation, null, main);
 	}
 
+	public Address toAddress(Integer id) {
+		return new Address(id, state, city, neighborhood, zipCode, street, number, additionalInformation, null, main);
+	}
+
 	public String getState() {
 		return state;
 	}

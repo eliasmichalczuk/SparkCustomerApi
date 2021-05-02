@@ -3,6 +3,7 @@ package com.elias.spark.customer.application;
 import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.application.cmd.UpdateCustomerCmd;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
+import com.elias.spark.customer.domain.model.Address;
 import com.elias.spark.customer.domain.model.Customer;
 import com.elias.spark.customer.domain.service.CustomerCpfDomainService;
 import com.elias.spark.customer.domain.service.MainAddressDomainService;
@@ -33,12 +34,11 @@ public class CustomerApplicationService {
 
 		mainAddressDomainService.verifyOnlyOneMainAddress(cmd.getAddresses());
 
-		return customerRepository.saveFullCustomer(cmd.toCustomer());
+		return customerRepository.saveCustomerWithAddresses(cmd.toCustomer());
 	}
 
 	public Customer update(UpdateCustomerCmd cmd) throws CustomerNotFoundException {
-		var customerToUpdate = customerRepository.findById(cmd.getId())
-		                                    .orElseThrow(() -> new CustomerNotFoundException(cmd.getId()));
+		var customerToUpdate = customerRepository.getById(cmd.getId());
 
 		customerCpfDomainService.verifyCanBeUsedInUpdate(cmd.getCpf(), customerToUpdate);
 		mainAddressDomainService.verifyOnlyOneMainAddress(cmd.getAddresses());
@@ -46,6 +46,32 @@ public class CustomerApplicationService {
 		customerToUpdate.update(cmd.getName(), cmd.getBirthDate(), cmd.getCpf(), cmd.getGender(), cmd.getEmail());
 
 		return customerRepository.update(cmd.toCustomer());
+	}
+
+	public Address saveAddress(Address address, Integer customerId) {
+		address.setCustomerId(customerId);
+		var addresses = customerRepository.findAllByCustomerId(customerId);
+		addresses.stream().filter(Address::isMain).findFirst().ifPresent(addr -> {
+			if (address.isMain()) {
+				addr.setMain(false);
+				customerRepository.updateAddress(addr);
+			}
+		});
+		address.setId(customerRepository.insertAddress(address));
+		return address;
+	}
+
+	public Address update(Address address, Integer customerId) {
+		address.setCustomerId(customerId);
+		var addresses = customerRepository.findAllByCustomerId(customerId);
+		addresses.stream().filter(Address::isMain).findFirst().ifPresent(addr -> {
+			if (address.isMain()) {
+				addr.setMain(false);
+				customerRepository.updateAddress(addr);
+			}
+		});
+		customerRepository.updateAddress(address);
+		return address;
 	}
 
 }

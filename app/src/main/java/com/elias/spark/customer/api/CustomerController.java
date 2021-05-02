@@ -78,9 +78,9 @@ public class CustomerController {
 		return customer;
 	};
 
-	public String deleteOne(Request request, Response response)
+	public Void deleteOne(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException, NotFoundException {
-		customerRepository.delete(Long.valueOf(request.params("id")));
+		customerRepository.delete(Integer.valueOf(request.params("id")));
 		response.status(200);
 		return null;
 	};
