@@ -14,13 +14,13 @@ import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
 import com.elias.spark.customer.repository.CustomerRepository;
+import com.elias.spark.shared.exception.NotFoundException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javassist.NotFoundException;
 import spark.Request;
 import spark.Response;
 
@@ -57,13 +57,13 @@ public class CustomerController {
 
 	public Object findById(Request request, Response response)
 	        throws JsonGenerationException, JsonMappingException, IOException {
-		var customer = customerRepository.findById(Long.parseLong(request.params("id")));
+		var customer = customerRepository.findById(Integer.parseInt(request.params("id")));
 		if (customer.isPresent()) {
 			response.status(200);
 			return customer.get();
 		}
 		response.status(404);
-		throw new CustomerNotFoundException(Long.parseLong(request.params("id")));
+		throw new CustomerNotFoundException(Integer.parseInt(request.params("id")));
 	};
 
 	public Customer save(Request request, Response response)
@@ -78,7 +78,7 @@ public class CustomerController {
 	        throws JsonGenerationException, JsonMappingException, IOException, NotFoundException {
 		var dto = objectMapper.readValue(request.body(), CustomerCmdDto.class);
 
-		var customer = customerApplicationService.update(dto.toUpdateCmd(Long.valueOf(request.params("id"))));
+		var customer = customerApplicationService.update(dto.toUpdateCmd(Integer.valueOf(request.params("id"))));
 		response.status(200);
 		return customer;
 	};

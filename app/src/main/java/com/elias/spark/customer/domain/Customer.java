@@ -1,6 +1,7 @@
 package com.elias.spark.customer.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import com.elias.spark.customer.domain.exception.CustomerMaxAgeExceededException;
@@ -9,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 
 public class Customer {
 
-	private Long id;
+	private Integer id;
 	private UUID uuid;
 	private String name;
 	@JsonDeserialize(using = LocalDateDeserializer.class)
@@ -17,9 +18,16 @@ public class Customer {
 	private String cpf;
 	private Gender gender;
 	private String email;
-//	private List<Address> addresses;
+	private List<Address> addresses;
 
-	public Customer(Long id, UUID uuid, String name, LocalDate birthDate, String cpf, Gender gender, String email) {
+	public Customer(Integer id,
+	                UUID uuid,
+	                String name,
+	                LocalDate birthDate,
+	                String cpf,
+	                Gender gender,
+	                String email,
+	                List<Address> addresses) {
 		super();
 		this.id = id;
 		this.uuid = uuid;
@@ -28,6 +36,7 @@ public class Customer {
 		this.cpf = cpf;
 		this.gender = gender;
 		this.email = email;
+		this.addresses = addresses;
 
 		verifyAge();
 	}
@@ -51,11 +60,11 @@ public class Customer {
 		return (LocalDate.now().getYear() - birthDate.getYear()) > 100;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -105,5 +114,17 @@ public class Customer {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public void addAdress(Address address) {
+		this.addresses.add(address);
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 }

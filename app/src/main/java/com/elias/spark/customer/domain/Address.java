@@ -1,6 +1,7 @@
 package com.elias.spark.customer.domain;
 
 public class Address {
+	private String id;
 	private String state;
 	private String city;
 	private String neighborhood;
@@ -8,7 +9,35 @@ public class Address {
 	private String street;
 	private String number;
 	private String additionalInformation;
+	private Integer customerId;
 	private boolean main;
+
+	public Address() {
+		super();
+	}
+
+	public Address(String id,
+	               String state,
+	               String city,
+	               String neighborhood,
+	               String zipCode,
+	               String street,
+	               String number,
+	               String additionalInformation,
+	               Integer customerId,
+	               boolean main) {
+		super();
+		this.id = id;
+		this.state = state;
+		this.city = city;
+		this.neighborhood = neighborhood;
+		this.zipCode = zipCode;
+		this.street = street;
+		this.number = number;
+		this.additionalInformation = additionalInformation;
+		this.customerId = customerId;
+		this.main = main;
+	}
 
 	public String getState() {
 		return state;
@@ -16,6 +45,22 @@ public class Address {
 
 	public String getCity() {
 		return city;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
 	}
 
 	public String getNeighborhood() {

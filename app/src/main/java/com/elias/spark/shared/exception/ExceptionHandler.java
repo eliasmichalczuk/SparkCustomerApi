@@ -27,8 +27,6 @@ public class ExceptionHandler implements Route {
 			return objectMapper.writeValueAsString(controllerHandle.handle(req, res));
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println(res.raw().getStatus());
-			System.out.println(res.raw().getStatus() / 100);
 			if (res.raw().getStatus() / 100 == 2) {
 				res.status(400);
 			}

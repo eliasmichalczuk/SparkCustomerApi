@@ -4,11 +4,10 @@ import com.elias.spark.customer.application.cmd.CreateCustomerCmd;
 import com.elias.spark.customer.application.cmd.UpdateCustomerCmd;
 import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.exception.CustomerCpfIsAlreadyInUseException;
+import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
 import com.elias.spark.customer.repository.CustomerRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import javassist.NotFoundException;
 
 @Singleton
 public class CustomerApplicationService {
@@ -27,12 +26,12 @@ public class CustomerApplicationService {
 			throw new CustomerCpfIsAlreadyInUseException();
 		}
 
-		return customerRepository.save(cmd.toCustomer());
+		return customerRepository.saveFullCustomer(cmd.toCustomer());
 	}
 
-	public Customer update(UpdateCustomerCmd cmd) throws NotFoundException {
+	public Customer update(UpdateCustomerCmd cmd) throws CustomerNotFoundException {
 		var oldCustomer = customerRepository.findById(cmd.getId())
-		                                    .orElseThrow(() -> new NotFoundException("Customer not found."));
+		                                    .orElseThrow(() -> new CustomerNotFoundException(cmd.getId()));
 
 		if (cpfCannotBeUsedInUpdate(cmd, oldCustomer)) {
 			throw new CustomerCpfIsAlreadyInUseException();

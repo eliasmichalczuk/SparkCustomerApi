@@ -1,8 +1,10 @@
 package com.elias.spark.customer.application.cmd;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
+import com.elias.spark.customer.domain.Address;
 import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.Gender;
 
@@ -12,18 +14,26 @@ public class CreateCustomerCmd {
 	private final String cpf;
 	private final Gender gender;
 	private final String email;
+	private final List<Address> addresses;
 
-	public CreateCustomerCmd(UUID uuid, String name, LocalDate birthDate, String cpf, Gender gender, String email) {
+	public CreateCustomerCmd(UUID uuid,
+	                         String name,
+	                         LocalDate birthDate,
+	                         String cpf,
+	                         Gender gender,
+	                         String email,
+	                         List<Address> addresses) {
 		super();
 		this.name = name;
 		this.birthDate = birthDate;
 		this.cpf = cpf;
 		this.gender = gender;
 		this.email = email;
+		this.addresses = addresses;
 	}
 
 	public Customer toCustomer() {
-		return new Customer(1l, UUID.randomUUID(), name, birthDate, cpf, gender, email);
+		return new Customer(1, UUID.randomUUID(), name, birthDate, cpf, gender, email, addresses);
 	}
 
 	public String getName() {

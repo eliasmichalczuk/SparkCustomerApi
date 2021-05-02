@@ -9,3 +9,5 @@ mysql -u root -p
 sudo mysql
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
 type exit to leave
+
+https://stackoverflow.com/questions/24337100/how-to-create-a-one-to-many-relationship-with-jdbi-sql-object-api

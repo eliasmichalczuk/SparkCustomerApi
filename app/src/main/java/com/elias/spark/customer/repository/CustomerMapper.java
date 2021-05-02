@@ -12,12 +12,13 @@ import com.elias.spark.customer.domain.Gender;
 class CustomerMapper implements RowMapper<Customer> {
 	@Override
 	public Customer mapRow(ResultSet rs) throws SQLException {
-		return new Customer(rs.getLong("id"),
+		return new Customer(rs.getInt("id"),
 		                    UUID.fromString(rs.getString("uuid")),
 		                    rs.getString("name"),
 		                    rs.getDate("birthDate").toLocalDate(),
 		                    rs.getString("cpf"),
 		                    Gender.valueOf(rs.getString("gender")),
-		                    rs.getString("email"));
+		                    rs.getString("email"),
+		                    null);
 	}
 }

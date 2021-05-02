@@ -1,26 +1,30 @@
 package com.elias.spark.customer.application.cmd;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
+import com.elias.spark.customer.domain.Address;
 import com.elias.spark.customer.domain.Customer;
 import com.elias.spark.customer.domain.Gender;
 
 public class UpdateCustomerCmd {
-	private Long id;
+	private Integer id;
 	private final String name;
 	private final LocalDate birthDate;
 	private final String cpf;
 	private final Gender gender;
 	private final String email;
+	private final List<Address> addresses;
 
-	public UpdateCustomerCmd(Long id,
+	public UpdateCustomerCmd(Integer id,
 	                         UUID uuid,
 	                         String name,
 	                         LocalDate birthDate,
 	                         String cpf,
 	                         Gender gender,
-	                         String email) {
+	                         String email,
+	                         List<Address> addresses) {
 		super();
 		this.name = name;
 		this.birthDate = birthDate;
@@ -28,13 +32,14 @@ public class UpdateCustomerCmd {
 		this.gender = gender;
 		this.email = email;
 		this.id = id;
+		this.addresses = addresses;
 	}
 
 	public Customer toCustomer() {
-		return new Customer(id, UUID.randomUUID(), name, birthDate, cpf, gender, email);
+		return new Customer(id, UUID.randomUUID(), name, birthDate, cpf, gender, email, List.of());
 	}
 
-	public UpdateCustomerCmd setId(Long id) {
+	public UpdateCustomerCmd setId(Integer id) {
 		this.id = id;
 		return this;
 	}
@@ -43,7 +48,7 @@ public class UpdateCustomerCmd {
 		return name;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
