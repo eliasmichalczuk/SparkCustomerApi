@@ -73,10 +73,10 @@ public class CustomerRepository {
 		Map<String, String> params = new HashMap<>();
 		params.put("name", name);
 		params.put("birthDate", birthDate);
-		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer"
-		        + " where 1=1 and (:name is not null and name = :name) "
-		        + " and (:birthDate is not null and birthDate = :birthDate) and 1=1 ")
-		                                                        .bindMap(params)
+		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer")
+//		        + " where 1=1 and (:name is not null and name = :name) "
+//		        + " and (:birthDate is not null and birthDate = :birthDate) and 1=1 ")
+//		                                                        .bindMap(params)
 		                                                        .mapTo(Customer.class)
 		                                                        .list());
 	}

@@ -15,6 +15,7 @@ public class ExceptionHandler implements Route {
 	public ExceptionHandler(Route controllerHandle) {
 		super();
 		this.controllerHandle = controllerHandle;
+		objectMapper.findAndRegisterModules();
 	}
 
 	public static ExceptionHandler wrap(Route controllerHandle) {
@@ -23,7 +24,7 @@ public class ExceptionHandler implements Route {
 
 	public Object handle(Request req, Response res) throws JsonProcessingException {
 		try {
-			return controllerHandle.handle(req, res);
+			return objectMapper.writeValueAsString(controllerHandle.handle(req, res));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(res.raw().getStatus());
