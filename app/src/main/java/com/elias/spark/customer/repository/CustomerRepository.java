@@ -80,4 +80,8 @@ public class CustomerRepository {
 		                                                        .mapTo(Customer.class)
 		                                                        .list());
 	}
+
+	public void delete(Long id) {
+		jdbi.withHandle(handle -> handle.execute("DELETE from customer where id = ?", id));
+	}
 }
