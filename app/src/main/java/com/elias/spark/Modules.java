@@ -5,6 +5,8 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.Slf4JSqlLogger;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
+import com.elias.spark.customer.repository.CustomerRepository;
+import com.elias.spark.customer.repository.IAddressRepository;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -35,5 +37,12 @@ public final class Modules {
 			return flyway;
 		}
 
+	}
+
+	static class RepositoryModule extends AbstractModule {
+		@Override
+		protected void configure() {
+			bind(IAddressRepository.class).to(CustomerRepository.class);
+		}
 	}
 }

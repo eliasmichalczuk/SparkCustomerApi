@@ -12,6 +12,7 @@ import com.elias.spark.customer.api.dto.AddressCmdDto;
 import com.elias.spark.customer.application.CustomerApplicationService;
 import com.elias.spark.customer.domain.model.Address;
 import com.elias.spark.customer.repository.CustomerRepository;
+import com.elias.spark.customer.repository.IAddressRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +29,16 @@ public class AddressController {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final CustomerRepository customerRepository;
 	private final CustomerApplicationService customerApplicationService;
+	private final IAddressRepository addressRepository;
 
 	@Inject
 	public AddressController(CustomerRepository customerRepository,
-	                         CustomerApplicationService customerApplicationService) {
+	                         CustomerApplicationService customerApplicationService,
+	                         IAddressRepository addressRepository) {
 		super();
 		this.customerRepository = customerRepository;
 		this.customerApplicationService = customerApplicationService;
+		this.addressRepository = addressRepository;
 		objectMapper.findAndRegisterModules();
 	}
 
@@ -48,7 +52,7 @@ public class AddressController {
 
 	public List<Address> getAll(Request request, Response response) {
 		var customerId = Integer.parseInt(request.params("customerId"));
-		return customerRepository.findAllByCustomerId(customerId);
+		return addressRepository.findAllByCustomerId(customerId);
 	};
 
 	public Address save(Request request, Response response) throws JsonMappingException, JsonProcessingException {

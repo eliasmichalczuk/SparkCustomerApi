@@ -8,6 +8,7 @@ package com.elias.spark;
 import org.flywaydb.core.Flyway;
 
 import com.elias.spark.Modules.DatabaseModule;
+import com.elias.spark.Modules.RepositoryModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -24,6 +25,6 @@ public class App {
 	}
 
 	private static Injector configure() {
-		return Guice.createInjector(new DatabaseModule());
+		return Guice.createInjector(new DatabaseModule(), new RepositoryModule());
 	}
 }

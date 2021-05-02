@@ -8,6 +8,7 @@ import com.elias.spark.customer.domain.model.Customer;
 import com.elias.spark.customer.domain.service.CustomerCpfDomainService;
 import com.elias.spark.customer.domain.service.MainAddressDomainService;
 import com.elias.spark.customer.repository.CustomerRepository;
+import com.elias.spark.customer.repository.IAddressRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -18,14 +19,17 @@ public class CustomerApplicationService {
 	private CustomerRepository customerRepository;
 	private MainAddressDomainService mainAddressDomainService;
 	private CustomerCpfDomainService customerCpfDomainService;
+	private final IAddressRepository addressRepository;
 
 	@Inject
 	public CustomerApplicationService(CustomerRepository customerRepository,
 	                                  MainAddressDomainService mainAddressDomainService,
-	                                  CustomerCpfDomainService customerCpfDomainService) {
+	                                  CustomerCpfDomainService customerCpfDomainService,
+	                                  IAddressRepository addressRepository) {
 		this.customerRepository = customerRepository;
 		this.mainAddressDomainService = mainAddressDomainService;
 		this.customerCpfDomainService = customerCpfDomainService;
+		this.addressRepository = addressRepository;
 	}
 
 	public Customer save(CreateCustomerCmd cmd) {
@@ -54,10 +58,10 @@ public class CustomerApplicationService {
 		addresses.stream().filter(Address::isMain).findFirst().ifPresent(addr -> {
 			if (address.isMain()) {
 				addr.setMain(false);
-				customerRepository.updateAddress(addr);
+				addressRepository.updateAddress(addr);
 			}
 		});
-		address.setId(customerRepository.insertAddress(address));
+		address.setId(addressRepository.insertAddress(address));
 		return address;
 	}
 
@@ -67,10 +71,10 @@ public class CustomerApplicationService {
 		addresses.stream().filter(Address::isMain).findFirst().ifPresent(addr -> {
 			if (address.isMain()) {
 				addr.setMain(false);
-				customerRepository.updateAddress(addr);
+				addressRepository.updateAddress(addr);
 			}
 		});
-		customerRepository.updateAddress(address);
+		addressRepository.updateAddress(address);
 		return address;
 	}
 

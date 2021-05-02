@@ -56,19 +56,7 @@ public class CustomerRepository implements IAddressRepository {
 	}
 
 	public void updateAddress(Address address) {
-		jdbi.withHandle(handle -> handle.createUpdate("UPDATE address SET"
-		        + " state = :state, city = :city, neighborhood = :neighborhood, zipCode = :zipCode, street = :street, "
-		        + "number = :number, additionalInformation = :additionalInformation, main = :main " + " where id = :id")
-		                                .bind("state", address.getState())
-		                                .bind("city", address.getCity())
-		                                .bind("neighborhood", address.getNeighborhood())
-		                                .bind("zipCode", address.getZipCode())
-		                                .bind("street", address.getStreet())
-		                                .bind("number", address.getNumber())
-		                                .bind("additionalInformation", address.getAdditionalInformation())
-		                                .bind("main", address.getMain())
-		                                .bind("id", address.getId())
-		                                .execute());
+		addressRepository.updateAddress(address);
 	}
 
 	public Customer findByIdManualJoin(Integer id) {
@@ -119,10 +107,11 @@ public class CustomerRepository implements IAddressRepository {
 	}
 
 	public List<Address> findAllByCustomerId(Integer id) {
-		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where customerId = :id")
-		                                                       .bind("id", id)
-		                                                       .mapTo(Address.class)
-		                                                       .list());
+//		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where customerId = :id")
+//		                                                       .bind("id", id)
+//		                                                       .mapTo(Address.class)
+//		                                                       .list());
+		return addressRepository.findAllByCustomerId(id);
 	}
 
 	public Address getAddressById(Integer id) {
@@ -137,7 +126,7 @@ public class CustomerRepository implements IAddressRepository {
 		return addressRepository.insertAddress(a);
 	}
 
-	public Integer insertAddress1(Address address) {
+	public Integer insertAddressManual(Address address) {
 		return jdbi.withHandle(handle -> handle.createUpdate("insert into address (state, city, neighborhood, zipCode, street, number, additionalInformation, customerId, main)"
 		        + " values (:state, :city, :neighborhood, :zipCode, :street, :number, :additionalInformation, :customerId, :main)")
 		                                       .bind("state", address.getState())
