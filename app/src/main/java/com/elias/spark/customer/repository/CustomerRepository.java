@@ -1,14 +1,13 @@
 package com.elias.spark.customer.repository;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
+import org.jdbi.v3.stringtemplate4.StringTemplateEngine;
 
 import com.elias.spark.customer.domain.exception.AddressNotFoundException;
 import com.elias.spark.customer.domain.exception.CustomerNotFoundException;
@@ -107,10 +106,6 @@ public class CustomerRepository implements IAddressRepository {
 	}
 
 	public List<Address> findAllByCustomerId(Integer id) {
-//		return (List<Address>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from address where customerId = :id")
-//		                                                       .bind("id", id)
-//		                                                       .mapTo(Address.class)
-//		                                                       .list());
 		return addressRepository.findAllByCustomerId(id);
 	}
 
@@ -181,14 +176,26 @@ public class CustomerRepository implements IAddressRepository {
 		                                                            .findOne());
 	}
 
-	public List<Customer> findAll(String name, String birthDate) {
-		Map<String, String> params = new HashMap<>();
-		params.put("name", name);
-		params.put("birthDate", birthDate);
-		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer")
-//		        + " where 1=1 and (:name is not null and name = :name) "
-//		        + " and (:birthDate is not null and birthDate = :birthDate) and 1=1 ")
-//		                                                        .bindMap(params)
+	public List<Customer> findAll(String name,
+	                              String birthDate,
+	                              String state,
+	                              String city,
+	                              String sortBy,
+	                              String sortOrder) {
+		return (List<Customer>) jdbi.withHandle(handle -> handle.createQuery("SELECT * from customer"
+		        + " LEFT JOIN address addr ON addr.customerId = customer.id and addr.main = true"
+		        + " where (:name IS NULL OR name = :name) " + " and (:birthDate IS NULL OR birthDate = :birthDate)"
+		        + " and (:state IS NULL OR addr.state = :state)" + " and (:city IS NULL OR addr.city = :city)"
+		        + "order by <if(sort)> <sortBy>, <endif> customer.id ASC")
+//		                                        ((:sortOrder IS NULL OR :sortBy IS NULL) OR :sortOrder)"
+		                                                        .setTemplateEngine(new StringTemplateEngine())
+		                                                        .bind("name", name)
+		                                                        .bind("birthDate", birthDate)
+		                                                        .bind("state", state)
+		                                                        .bind("city", city)
+		                                                        .define("sort", sortBy != null)
+		                                                        .define("sortBy", sortBy)
+		                                                        .define("sortOrder", sortOrder)
 		                                                        .mapTo(Customer.class)
 		                                                        .list());
 	}

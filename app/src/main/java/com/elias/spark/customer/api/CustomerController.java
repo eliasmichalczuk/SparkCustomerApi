@@ -51,7 +51,11 @@ public class CustomerController {
 	public List<Customer> getAll(Request request, Response response) {
 		var name = request.queryParams("name");
 		var birthDate = request.queryParams("birthDate");
-		return customerRepository.findAll(name, birthDate);
+		var state = request.queryParams("state");
+		var city = request.queryParams("city");
+		var sortBy = request.queryParams("sortBy");
+		var sortOrder = request.queryParams("sortOrder");
+		return customerRepository.findAll(name, birthDate, state, city, sortBy, sortOrder);
 	};
 
 	public Object findById(Request request, Response response)
