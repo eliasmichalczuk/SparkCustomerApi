@@ -186,7 +186,7 @@ public class CustomerRepository implements IAddressRepository {
 		        + " LEFT JOIN address addr ON addr.customerId = customer.id and addr.main = true"
 		        + " where (:name IS NULL OR name = :name) " + " and (:birthDate IS NULL OR birthDate = :birthDate)"
 		        + " and (:state IS NULL OR addr.state = :state)" + " and (:city IS NULL OR addr.city = :city)"
-		        + "order by <if(sort)> <sortBy>, <endif> <if(shouldSort)> <sortOrder> <endif>")
+		        + "order by email <if(sort)> ,<sortBy> <endif>  <if(shouldSort)> <sortOrder> <endif>")
 		                                                        .setTemplateEngine(new StringTemplateEngine())
 		                                                        .bind("name", name)
 		                                                        .bind("birthDate", birthDate)
